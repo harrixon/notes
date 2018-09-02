@@ -1,6 +1,6 @@
-# Knex.js
+# NodeJS and PostgreSQL
 
-###a SQL query builder library for JavaScript
+## Knex.js : a SQL query builder library for JavaScript
 
 ```bash
 npm install knex pg

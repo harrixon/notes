@@ -4,10 +4,10 @@
 
 ```cmd
 // to create react envir.
-npm install -g create-react-app
+yarn add -g create-react-app
 
 // to transpile .ts to .js
-npm install -g ts-node typescript @types/node
+yarn add -g ts-node typescript @types/node
 ```
 
 #### new project
@@ -38,6 +38,9 @@ yarn add reactstrap @types/reactstrap
 yarn add redux react-redux @types/react-redux
 
 // redux-logger
+// * need to update both 
+// index.tsx with redux store
+// & store.ts with composeEnhancer/applyMiddleware
 yarn add redux-logger @types/redux-logger
 
 // axios

@@ -1,77 +1,85 @@
-# Basic SQL
+# SQL 
 
-### Starting PostgreSQL 9.5 database server
+## Index
 
-`sudo service postgresql start`
-`<your-pw>`
+- Basic SQL
+  1. [General Command](#general-command)
+  2. [Create and Drop Tables](#create-and-drop-tables)
+  3. [Add / Update / Delete data to table](#add-/-update-/-delete-data-to-table)
+  4. [Altering a table](#altering-a-table)
+  5. [Querying data](#querying-data)
+  6. [Refined search](#refined-search)
+  7. [Examples](#daily-exercise-as-example)
 
----
+- SQL Joins
+  1. [Primary Key and Foreign Key](#primary-key-and-foreign-key)
+  2. [Different type of Joins](#different-type-of-joins)
 
-### Go into `postgres@HARRIXON-PC ~~ ### 
+- [SQL Injection](#SQL-injection)
 
-`sudo su postgres`
 
----
 
-### Access to certain db (eg: fruits)
-`psql fruits`
-now in PSQL shell
+## Getting started
 
----
+```bash
+## Starting PostgreSQL 9.5 database server
+$ sudo service postgresql start
+[sudo] password for postgres: password
 
-### Shells
+## To use superuser postgres
+$ sudo su postgres
 
-`$-` is Bash shell
-`=#` is PSQL shell
-
----
-
-### List users and attributes
-=#`\du`
-
----
-
-### List DB and drop DB
-
-=# `\list`
-
-$ `dropdb <DB_name>`
-
----
-
-### Create table
-```sql
-CREATE TABLE citrus (
-    id SERIAL primary key,
-    name VARCHAR(255) not null,
-    color VARCHAR(255),
-    taste VARCHAR(255)
-);
-```
-
-`SERIAL` means that the counter ‘id’ increases with every row. `primary key` defines that id is the unique key by which each row can be identified.
-
-`VARCHAR(255)` indicates that the column will be filled with text of a not predefined length. 255 indicates the maximum length the text can have.
-
-`not null` tells PostgreSQL this value cannot be empty
-
----
-
-### Delete table
-
-```sql
-DROP TABLE <the_tablename_you_want_to_delete>;
+## To go into PSQL shell
+$ psql
 ```
 
 ---
 
-### Leave PostgreSQL shell
+## Within the PSQL shell (postgres=#)
+
+### General command
 
 ```sql
+/* To create a username same as the one in bash */
+CREATE USER <username> WITH PASSWORD 'somepw' SUPERUSER;
+
+/* To list all user */
+\du
+
+/* To list all db */
+\l
+
+/* To list all tables in a db */
+\dt
+
+/* To leave postgresql shell */
 \q
+
+/* To connect to a db */
+\c <dbname>
 ```
 
----
+### Create and Drop Tables
+
+```sql
+/* 
+	To create table:
+        SERIAL: the counter ‘id’ increases with every row
+        primary key: id is the unique key by which each row can be identified
+        VARCHAR: the column will be filled with text of a not predefined length
+        (255): maximum length the text can have
+        not null:  value cannot be empty
+*/
+CREATE TABLE citrus (
+	id SERIAL primary key,
+	name VARCHAR(255) not null,
+	color VARCHAR(255),
+	taste VARCHAR(255)
+);
+
+/* To drop a table */
+DROP TABLE <some_table>;
+```
 
 ### Add / Update / Delete data to table
 
@@ -80,7 +88,8 @@ INSERT INTO citrus (name, color, taste) VALUES ('lemon', 'yellow', 'sour');
 INSERT INTO citrus (name, color, taste) VALUES ('orange', 'orange', 'juicy');
 INSERT INTO citrus (name, color, taste) VALUES ('grapefruit', 'orange', 'bitter');
 INSERT INTO citrus (name, color, taste) VALUES ('lime', 'green', 'sour');
-INSERT INTO citrus (name, color, taste) VALUES ('tangerine', 'yellow', 'sweet');
+/* Order of column doesn't matter */
+INSERT INTO citrus (color, name, taste) VALUES ('yellow', 'tangerine', 'sweet');
 ```
 
 ```sql
@@ -89,6 +98,33 @@ UPDATE citrus SET color = 'orange' WHERE color = 'yellow';
 
 ```sql
 DELETE FROM citrus WHERE name = 'tangerine';
+```
+
+### Altering a table
+
+```sql
+/* To change existing table structure */
+ALTER TABLE table_name action;
+
+/* To ADD | DROP | RENAME and column */
+ALTER TABLE table_name ADD COLUMN new_column_name TYPE;
+ALTER TABLE table_name DROP COLUMN column_name;
+ALTER TABLE table_name RENAME COLUMN column_name TO new_column_name;
+
+/* To change a default value of the column */
+ALTER TABLE table_name ALTER COLUMN column_name [SET DEFAULT value | DROP DEFAULT];
+
+/* To change the NOT NULL constraint */
+ALTER TABLE table_name ALTER COLUMN column_name [SET NOT NULL| DROP NOT NULL];
+
+/* To add a CHECKconstraint */
+ALTER TABLE table_name ADD CHECK expression;
+
+/* To add a constraint */
+ALTER TABLE table_name ADD CONSTRAINT constraint_name constraint_definition;
+
+/* To rename a table */
+ALTER TABLE table_name RENAME TO new_table_name;
 ```
 
 ---
@@ -134,19 +170,10 @@ id |    name    | color  | taste
 
 ---
 
-### some title
-
-
-
-
-
-
-
----
-
-### EX A
+### Daily exercise as example
 
 ```sql
+/* EX A */
 fruits=# CREATE TABLE stock (
 	id SERIAL primary key,
 	name VARCHAR(255) not null,
@@ -167,6 +194,7 @@ id | name | description_text | quantity_on_stock | price
 fruits=#
 INSERT INTO stock (name , description_text , quantity_on_stock , price) VALUES ('apple' , 'apple' , '10' , '4');
 /* INSERT 0 1 */
+fruits=#
 INSERT INTO stock (name , description_text , quantity_on_stock , price) VALUES ('orange' ,
 'orange' , '20' , '5');
 /* INSERT 0 1 */
@@ -177,21 +205,15 @@ INSERT INTO stock (name , description_text , quantity_on_stock , price) VALUES (
   2 | orange | orange           |                20 |     5
 (2 rows)
 */
-```
 
----
-
-### EX B
-
-```sql
+/* EX B */
+fruits=#
 DROP TABLE stock;
 ```
 
----
-
-### EX C
-
 ```sql
+/* EX C */
+fruits=#
 CREATE TABLE employee(
 	EMPLOYEE_ID SERIAL primary key,
 	FIRST_NAME text,
@@ -227,10 +249,8 @@ SELECT first_name,last_name FROM employee WHERE SALARY > 5000 AND SALARY < 11000
 /* C2 */
 select * from employee where contract_length < 2;
 /* C3 */
-insert into employee (employee_id, first_name, last_name, salary, contract_length) VALUES (
-'5', 'John', 'Doe', 15000, 5);
-insert into employee (employee_id, first_name, last_name, salary, contract_length) VALUES (
-'6', 'Jane', 'Doe', 9000, 1);
+insert into employee (employee_id, first_name, last_name, salary, contract_length) VALUES ('5', 'John', 'Doe', 15000, 5);
+insert into employee (employee_id, first_name, last_name, salary, contract_length) VALUES ('6', 'Jane', 'Doe', 9000, 1);
 /* C4 */
 update employee set contract_length = '2', salary = '8000' where first_name = 'Nancy' and last_name = 'Greenberg';
 /* C5 */
@@ -239,44 +259,11 @@ select * from employee order by salary desc;
 
 ---
 
-### EX D
-
-```js
-var pg = require('pg');
-
-var config = {
-    user: 'harrixon',
-    database: 'fruits',
-    password: 'asdfgh',
-    host: 'localhost',
-    port: 5432,
-    max: 10, // max number of clients in the pool
-    idleTimeoutMillis: 30000, // how long a client is allowed to remain idle before being closed
-}
-
-var client = new pg.Client(config);
-
-// $sudo service postgresql start
-
-client.connect();
-
-let query = 'SELECT * FROM citrus WHERE color = $1 order by id asc;';
-
-client.query(query, ["orange"], function(err, results) {
-    if(err) {
-        console.log(err);
-    }
-    console.log(results.rows);
-});
-```
-
----
-
 # SQL joins
 
 ## Primary Key and Foreign Key
 
- join two tables together using foreign key
+Join two tables together using foreign key
 
 ```sql
 /* examples:
@@ -387,74 +374,30 @@ on citrus.id = stock.citrus_id;
 
 ---
 
-### Transactions
+## SQL Injection
 
-##### eg: bank transaction
+- You will want to enter a lot of user input into your table
+- But the inputs shall not be trusted
+- Eg: receiving a `DROP TABLE` input
+- Sanitize all database inputs
+- Transform all user input to a string, so any command input cannot run
 
-`Begin`	->	`Actual SQL `	-  err, `rollback` 	->	 original state
-
-​						-  ok,  `commit`  	-> 	 updated state
-
----
-
-##### Isolation
-
-no other transaction section can be started on same data(s) being targeted by active transaction
-
----
-
-## ACID Principle
-
-- `Atomcity` Atomicity requires that each transaction be “all or nothing”: if one part of the transaction fails, then the entire transaction fails, and the database state is left unchanged. An atomic system must guarantee atomicity in each and every situation, including power failures, errors and crashes. To the outside world, a committed transaction appears (by its effects on the database) to be indivisible (“atomic”), and an aborted transaction does not happen.
-- `Consistency` The consistency property ensures that any transaction will bring the database from one valid state to another. Any data written to the database must be valid according to all defined rules, including constraints, cascades, triggers, and any combination thereof. This does not guarantee correctness of the transaction in all ways the application programmer might have wanted (that is the responsibility of application-level code), but merely that any programming errors cannot result in the violation of any defined rules.
-- `Isolation` The isolation property ensures that the concurrent execution of transactions results in a system state that would be obtained if transactions were executed sequentially, i.e., one after the other. Providing isolation is the main goal of concurrency control. Depending on the concurrency control method (i.e., if it uses strict - as opposed to relaxed - serializability), the effects of an incomplete transaction might not even be visible to another transaction.
-- `Durability` The durability property ensures that once a transaction has been committed, it will remain so, even in the event of power loss, crashes, or errors. In a relational database, for instance, once a group of SQL statements execute, the results need to be stored permanently (even if the database crashes immediately thereafter). To defend against power loss, transactions (or their effects) must be recorded in a non-volatile memory.
-
----
-
-##### PgClient transaction (simple API)
+#### Example on how to do injection
 
 ```js
-function begin(done){
-    client.query('BEGIN',function(err){
-        if(err){
-            // Handle error here
+function getFruit(fruit, color) {
+    var client = new pg.Client('postgres://accelerate:password@localhost:5432/fruits');
+
+    client.connect();
+    var query = 'SELECT * FROM citrus WHERE name = $1 AND color = $2;';
+
+    client.query(query, [fruit, color], function(err, results) {
+        if(err) {
+            console.log(err);
         }
-        done();
+
+        console.log(results.rows);
     });
 }
-
-function commit(done){
-    client.query('COMMIT',function(err){
-        if(err){
-            //Handle error here
-        }
-        done();
-    });
-}
-
-function rollback(done){
-    client.query('ROLLBACK',function(err){
-        if(err){
-            //Handle error here
-        }
-        done();
-    });
-}
-
-begin(function(){
-    client.query("UPDATE bank_accounts SET amount = amount - 1000 WHERE account_holder = 'Alice'",function(err,results){
-        if(err){
-            rollback(function(){
-                console.log("Transaction is rolled back!");
-            });
-        }else{
-            commit(function(){
-                console.log("Transaction is committed!");
-            });
-        }
-    });
-});
 ```
-
 

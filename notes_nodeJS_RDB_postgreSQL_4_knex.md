@@ -1,6 +1,26 @@
 # NodeJS and PostgreSQL
 
+##### Index
+
+- [Knex.js](#Knex.js-:-a-SQL-query-builder-library-for-javascript)
+- [Code Comparison](#code-comparison)
+- [Test Your Query](#test-your-knex-query-online)
+- Common Methods
+  - [Select](#Select-method)
+  - [Where](#Where-method)
+  - [Join ... On ... Where](#Join-/-on-method)
+  - [GroupBy / OrderBy / Distinct](#Groupby-/-orderby-/-distinct-method)
+  - [Insert](#Insert)
+  - [Batch Insert](#Batch Insert)
+  - [Update](#Update)
+  - [Delete](#Delete)
+- [Transaction](#Transaction)
+
 ## Knex.js : a SQL query builder library for JavaScript
+
+Writing complex SQL in JavaScript with library PgClient is error prone since there is no checking on the structure of the query written.
+
+So here comes knex.js, a SQL query builder library.
 
 ```bash
 npm install knex pg
@@ -20,6 +40,8 @@ const knex = require('knex')({
 ---
 
 ###Code Comparison
+
+`Knex` basically transforms the keyword to a method call in JavaScript in a [fluent interface](https://en.wikipedia.org/wiki/Fluent_interface) pattern which allows us to chain the method as we wish just like SQL.
 
 ```sql
 // SQL

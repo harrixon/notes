@@ -2,6 +2,28 @@
 
 ##AWS , apt-get , Bash , NodeJS , Nginx , Git
 
+### Index
+
+- [Flow to Create New Instance](#Simple flow for a new project in a new instance)
+- [Remote Access](#Remote Access)
+- [In Remote Machine](#In Remote Machine)
+  - [Users / Password](#Add new user / pw)
+  - [Update & Upgrade](#Update & Upgrade)
+  - [Reboot](#Reboot)
+- [Packages](#Install necessary packages)
+  - [Node.js](#Install Node.js)
+  - [Other packages](#Install Packages)
+  - [Common Commands](#Common system admin commands)
+- [Setup a Node.JS app](#Setup NodeJS app)
+  - ["Forever"](#Set-up-server-to-run-forever)
+  - [Nginx](#Nginx - reverse proxy)
+  - [HTTPS](#Set up HTTPS)
+  - [Cron job](#Cron job)
+- [Git Deployment](#Git Deployment)
+- [Command not found](#Command not found)
+
+---
+
 #### Deploy
 
 Domain : a pretty address to tell the world
@@ -99,9 +121,7 @@ sudo apt-get upgrade
 
 1. aws webpage > Instance > Actions > Instance State > Reboot > Yes
 
-2. ```
-   aws ec2 reboot-instances --instance-ids i-1234567890abcdef5
-   ```
+2. aws ec2 reboot-instances --instance-ids i-1234567890abcdef5
 
 ---
 
@@ -189,7 +209,7 @@ scp -r my_folder <username>@<hostname>:
 
 ---
 
-#### Setup NodeJS app
+### Setup NodeJS app
 
 ```ubuntu
 // Navigate to your home directory by cd ~, make a new file
@@ -233,7 +253,7 @@ kill -9 <process_id>
 
 ---
 
-#### Set up server to run 'forever' using `forever`
+#### Set up server to run forever
 
 so that server wont shut down after SSH connection is terminated
 
@@ -414,3 +434,21 @@ git remote rm production
 // push
 git push production master
 ```
+
+---
+
+### Command not found
+
+some modules are installed in project but not on the machine globally, like knex.js
+
+when you try `knex -V`
+
+the console will say "knex" command not found, do you mean .......
+
+so, navigate to project folder and type :
+
+```bash
+$ node_modules/knex/bin/cli.js -h
+```
+
+it will be `-h` or `-V` or `migrate:latest` or whatever options available 

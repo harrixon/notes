@@ -118,6 +118,16 @@
 
    a. plug a physical device, turn on debug mode
 
+   > https://facebook.github.io/react-native/docs/running-on-device
+   >
+   > Enable Debugging over USB
+   >
+   > Establish Connection
+   >
+   > Connect To Development Server
+   >
+   > Run Your App
+
    b. open android studio, run AVD manager, config/run an AVD
 
    	> again , follow the instructions for AVD settings
